@@ -9,6 +9,7 @@
 | S. No. | Experiment |
 | ---: | :--- |
 | 1 | [Comparison of Virtual Machines (VMs) and Containers](./Lab/Experiment1/README.md) |
+| 2 | [Docker Installation, Configuration, and Running Images](./Lab/Experiment2/README.md) |
 
 ## Theory
  - [Preserve changes in container](./Theory/PreserveChangesInContainer/Ref.md)

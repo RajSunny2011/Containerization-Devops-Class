@@ -14,7 +14,7 @@
 
 ### **Part A: Virtual Machine**
 
- - Download Vagrantfile of required VM OS using `vagrant init hashicorp/bionic64` , run `vagrant up` to start up the VM and `vagrant ssh` to access the VM terminal.
+ - Download Vagrantfile of required VM OS using `vagrant init hashicorp/bionic64`, run `vagrant up` to start up the VM and `vagrant ssh` to access the VM terminal.
 
 ![](./vagrant-init.png)
 ![](./vagrant-up.png)
