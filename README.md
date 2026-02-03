@@ -13,6 +13,7 @@
 | 2 | [Docker Installation, Configuration, and Running Images](./Lab/Experiment2/README.md) |
 
 ## Theory
- - [Preserve changes in container](./Theory/PreserveChangesInContainer/Ref.md)
+ - [Preserve changes in container](./Theory/PreserveChangesInContainer/README.md)
 
- - [Dockerfile Tutorial](./Theory/DockerfileTutorial/Ref.md)
+ - [Dockerfile Tutorial](./Theory/DockerfileTutorial/README.md)
+
