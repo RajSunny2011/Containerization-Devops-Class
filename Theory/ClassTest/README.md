@@ -22,3 +22,9 @@ while (True):
     else:
         print("Not Matched")
 ```
+
+To build and run the Container
+```Bash
+docker build -t python-app:1.0 .
+docker run -rm -it --name python-test python-app:1.0
+```
