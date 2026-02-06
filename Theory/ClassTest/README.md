@@ -4,8 +4,8 @@ Dockerfile
 ```Dockerfile
 FROM python:3.11.14-alpine3.23
 WORKDIR /home
-COPY app.py .
 RUN pip install numpy
+COPY app.py .
 CMD ["python","./app.py"]
 ```
 
@@ -26,5 +26,5 @@ while (True):
 To build and run the Container
 ```Bash
 docker build -t python-app:1.0 .
-docker run -rm -it --name python-test python-app:1.0
+docker run --rm -it --name python-test python-app:1.0
 ```
