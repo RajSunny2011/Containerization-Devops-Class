@@ -21,6 +21,7 @@ curl http://localhost:8080
 ```
 
 The official NGINX image:
+
 ![](./nginx-image.png)
 
 ### **Part 2: Custom NGINX using Ubuntu Base Image**
@@ -47,6 +48,7 @@ docker run -d -v ./nginx-html/:/var/www/html -p 8081:80 --name nginx-ubuntu-test
 
 
 The built Ubuntu NGINX image:
+
 ![](./nginx-ubuntu-image.png)
 
 ### **Part 3: Custom NGINX Using Alpine Base Image**
@@ -78,6 +80,7 @@ docker run -d -v ./nginx-html/:/var/www/html -p 8082:80 --name nginx-alpine-test
 ![](./nginx-alpine-build.png)
 
 The built Alpine NGINX image:
+
 ![](./nginx-alpine-image.png)
 
 ### **Part 4: Image Size and Layer Comparison**
