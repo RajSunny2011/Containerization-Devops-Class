@@ -16,4 +16,4 @@
 ## Theory
  - [Preserve changes in container](./Theory/PreserveChangesInContainer/README.md)
  - [Dockerfile Tutorial](./Theory/DockerfileTutorial/README.md)
- - [Python Script in docker](./Theory/ClassTest/README.md)
+ - [Python Script in docker](./Theory/ClassTask/README.md)
