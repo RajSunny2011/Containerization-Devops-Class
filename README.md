@@ -18,4 +18,4 @@
  - [Dockerfile Tutorial](./Theory/DockerfileTutorial/README.md)
  - [Python Script in docker](./Theory/ClassTask/README.md)
  - [Multistage docker build](./Theory/MultistageBuild/README.md)
- 
+ - [Data Management in Docker](./Theory/StorageInContainer/README.md)
