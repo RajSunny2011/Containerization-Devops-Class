@@ -19,3 +19,4 @@
  - [Python Script in docker](./Theory/ClassTask/README.md)
  - [Multistage docker build](./Theory/MultistageBuild/README.md)
  - [Data Management in Docker](./Theory/StorageInContainer/README.md)
+ - [Networking in Docker](./Theory/Networking/README.md)
