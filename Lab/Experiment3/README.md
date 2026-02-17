@@ -178,3 +178,31 @@ docker run -d \
 
 ![](./HTML-serving.png)
 
+### **Part 6: Set up a Flask Server**
+
+flask-alpine.Dockerfile:
+```Dockerfile
+FROM python:3.11.14-alpine3.23
+WORKDIR /home
+RUN pip install flask
+CMD ["python","./app.py"]
+```
+
+app.py:
+```python
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "Hello from Docker!"
+
+@app.route('/health')
+def health():
+    return "OK"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+```
