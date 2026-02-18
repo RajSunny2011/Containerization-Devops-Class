@@ -1,0 +1,22 @@
+services:
+  nginx:
+    
+    # Image name (same as in docker run)
+    image: nginx
+    
+    # --name my-nginx
+    container_name: my-nginx
+    
+    # -p 8080:80
+    ports:
+      - "8080:80"
+    
+    # -v ./html:/usr/share/nginx/html
+    volumes:
+      - ./html:/usr/share/nginx/
+    
+    environment:
+      - NGINX_HOST=localhost    # -e NGINX_HOST=localhost
+    restart: unless-stopped     # --restart unless-stopped
+    # Note: -d flag in docker run = detached mode
+    # In docker-compose, use: docker-compose up -d
