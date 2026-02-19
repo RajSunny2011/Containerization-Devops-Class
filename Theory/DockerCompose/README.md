@@ -167,3 +167,111 @@ docker run --entrypoint /bin/bash nginx
 # Docker Compose
 entrypoint: /bin/bash
 ```
+
+## Multi-Container Example Comparison
+
+**Using Docker Compose (Simple way):**
+```yaml
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - wordpress-network
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_content:/var/www/html/wp-content
+    depends_on:
+      - mysql
+    networks:
+      - wordpress-network
+
+volumes:
+  mysql_data:
+  wp_content:
+
+networks:
+  wordpress-network:
+```
+
+**Run it with one command:**
+```bash
+docker-compose up -d
+```
+
+## What Docker Compose Adds Beyond Docker Run
+
+### 1. **Dependencies & Startup Order**
+```yaml
+# App waits for database to be ready
+depends_on:
+  - database
+  - redis
+```
+
+### 2. **Build Configuration**
+```yaml
+# Build from Dockerfile instead of using pre-built image
+build:
+  context: .
+  dockerfile: Dockerfile.dev
+  args:
+    - NODE_ENV=development
+```
+
+### 3. **Service Scaling**
+```bash
+# Run multiple instances
+docker-compose up --scale web=3 --scale worker=2
+```
+
+### 4. **Unified Configuration**
+- Single source of truth
+- Version controllable
+- Shareable across teams
+
+## Key Advantages of Docker Compose
+
+1. **Simplicity for Multi-Container Apps**
+2. **Reproducibility**
+3. **Declarative Configuration**
+4. **Lifecycle Management:**
+```bash
+# Easy to manage entire application
+docker-compose up    # Start
+docker-compose down  # Stop & clean
+docker-compose logs  # View logs
+docker-compose ps    # Check status
+```
+
+## Quick Reference Cheatsheet
+
+| Docker Run Flag    | Docker Compose Equivalent  |
+| ------------------ | -------------------------- |
+| `-p 80:80`         | `ports: ["80:80"]`         |
+| `-v ./data:/app`   | `volumes: ["./data:/app"]` |
+| `-e KEY=value`     | `environment: [KEY=value]` |
+| `--name myapp`     | `container_name: myapp`    |
+| `--network net`    | `networks: [net]`          |
+| `--restart always` | `restart: always`          |
+| `-d`               | `docker-compose up -d`     |
+| `--link container` | `depends_on: [container]`  |
+| `-w /app`          | `working_dir: /app`        |
+| `--user 1000`      | `user: "1000"`             |
