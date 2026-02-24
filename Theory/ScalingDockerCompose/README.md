@@ -137,3 +137,190 @@ docker compose down
 | **Port Mapping**       | Use ranges or expose | `8080-8085:80` or `expose: - "80"` |
 | **Service Discovery**  | Use service names    | `database:5432` works for all      |
 | **Data Sharing**       | Use volumes          | All instances share same data      |
+
+
+
+
+
+# From last session
+
+Extent `Wordpress + MySQL`  for scaling with reverse proxy
+
+
+
+## The Original Setup `Wordpress + MySQL`  (Not Scalable)
+
+```yaml
+# Original docker-compose.yml
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - wordpress-network
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    ports:                    # Problem: Fixed host port
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_content:/var/www/html/wp-content
+    depends_on:
+      - mysql
+    networks:
+      - wordpress-network
+
+volumes:
+  mysql_data:
+  wp_content:
+networks:
+  wordpress-network:
+```
+
+## Scaling Challenges
+### Challenge 1: Port Conflict
+```bash
+$ docker compose up --scale wordpress=3
+# ERROR: Bind for 0.0.0.0:8080 failed: port is already allocated
+```
+
+### Challenge 2: MySQL Can't Scale
+```bash
+$ docker compose up --scale mysql=2
+# ERROR: Volume conflict - multiple containers can't share mysql_data
+```
+**Why?** MySQL needs clustering (Galera, Group Replication) for scaling.
+
+## The Scalable Solution
+### Step 1: Remove Port Mapping, Use Expose
+```yaml
+wordpress:
+  image: wordpress:latest
+  expose:                    # Internal access only
+    - "80"
+  # ports: - "8080:80"       # Removed
+```
+
+### Step 2: Add Nginx Reverse Proxy
+```yaml
+nginx:
+  image: nginx:latest
+  ports:
+    - "8080:80"              # Single entry point
+  volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf
+  depends_on:
+    - wordpress
+  networks:
+    - wordpress-network
+```
+
+### Step 3: Create Nginx Configuration (nginx.conf)
+```nginx
+events {}
+
+http {
+    upstream wordpress {
+        server wordpress:80;  # Docker DNS resolves to all replicas
+    }
+
+    server {
+        listen 80;
+        location / {
+            proxy_pass http://wordpress;
+            proxy_set_header Host $host;
+        }
+    }
+}
+```
+
+## Final Scalable docker-compose.yml
+
+```yaml
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - wordpress-network
+
+  wordpress:
+    image: wordpress:latest
+    expose:
+      - "80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_content:/var/www/html/wp-content
+    depends_on:
+      - mysql
+    networks:
+      - wordpress-network
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - wordpress
+    networks:
+      - wordpress-network
+
+volumes:
+  mysql_data:
+  wp_content:
+
+networks:
+  wordpress-network:
+```
+
+## Scaling Commands
+
+```bash
+# Scale WordPress to 3 instances
+$ docker compose up --scale wordpress=3
+
+# Verify
+$ docker compose ps
+```
+
+## Architecture Overview
+
+```
+User Request
+    ↓
+Port 8080 (Host)
+    ↓
+Nginx (Load Balancer)
+    ↓
+wordpress-1 ─┐
+wordpress-2 ─┼─→ MySQL (Single Instance)
+wordpress-3 ─┘
+    ↓
+Shared Volume: wp_content (Media, Plugins, Themes)
+```
