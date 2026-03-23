@@ -13,6 +13,7 @@
 |      2 | [Docker Installation, Configuration, and Running Images](./Lab/Experiment2/README.md)                |
 |      3 | [Deploying NGINX using diffrent base images and compairng image layers](./Lab/Experiment3/README.md) |
 |      4 | [Docker Essentials](./Lab/Experiment4/README.md)                                                     |
+|      5 | [Docker - Volumes, Environment Variables, Monitoring & Networks](./Lab/Experiment5/README.md)        |
 
 ## Theory
  - [Preserve changes in container](./Theory/PreserveChangesInContainer/README.md)
