@@ -1,0 +1,20 @@
+--- # it should start with three dash only
+- name: Update and configure servers
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install required packages
+      apt:
+        name: ["vim", "htop", "wget", "cowsay"]
+        state: present
+
+    - name: Create test file
+      copy:
+        dest: /root/ansible_test.txt
+        content: "Configured by Ansible on {{ inventory_hostname }}"

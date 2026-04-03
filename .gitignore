@@ -2,3 +2,4 @@
 *.tar
 .venv
 .env
+id_rsa*
