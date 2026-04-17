@@ -1,0 +1,53 @@
+# docker-compose.yml
+# This file starts two containers:
+#   1. sonar-db     → PostgreSQL database (stores SonarQube data)
+#   2. sonarqube    → The SonarQube server (web UI + analysis engine)
+
+services:
+  # ── Database ──────────────────────────────────────────────
+  sonar-db:
+    image: postgres:13
+    container_name: sonar-db
+    environment:
+      POSTGRES_USER: sonar          # DB username
+      POSTGRES_PASSWORD: sonar      # DB password
+      POSTGRES_DB: sonarqube        # DB name
+      POSTGRES_HOST_AUTH_METHOD: trust  # allow connections without password (for simplicity in this lab) 
+    volumes:
+      - sonar-db-data:/var/lib/postgresql/data   # persist data across restarts
+    networks:
+      - sonarqube-lab
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  # ── SonarQube Server ──────────────────────────────────────
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"                 # access dashboard at http://localhost:9000
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonarqube
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonar-data:/opt/sonarqube/data
+      - sonar-extensions:/opt/sonarqube/extensions
+    depends_on:
+      - sonar-db                    # wait for DB to start first
+    networks:
+      - sonarqube-lab
+
+# Named volumes (Docker manages storage location)
+volumes:
+  sonar-db-data:
+  sonar-data:
+  sonar-extensions:
+
+# Isolated network so containers can talk to each other by name
+networks:
+  sonarqube-lab:
+    driver: bridge

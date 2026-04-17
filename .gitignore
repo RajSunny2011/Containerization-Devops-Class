@@ -3,3 +3,6 @@
 .venv
 .env
 id_rsa*
+*.class
+*.log
+sonar/
