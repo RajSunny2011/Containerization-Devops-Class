@@ -1,0 +1,13 @@
+# wordpress-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+spec:
+  type: NodePort            # Exposes service on a port of each node (VM)
+  selector:
+    app: wordpress          # Send traffic to pods with this label
+  ports:
+    - port: 80              # Service port
+      targetPort: 80        # Pod port
+      nodePort: 30007       # External port (range: 30000–32767)

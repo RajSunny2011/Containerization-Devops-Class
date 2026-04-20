@@ -1,0 +1,20 @@
+# wordpress-deployment.yaml
+apiVersion: apps/v1          # Which Kubernetes API to use
+kind: Deployment             # Type of resource
+metadata:
+  name: wordpress            # Name of this deployment
+spec:
+  replicas: 2                # Run 2 identical pods
+  selector:
+    matchLabels:
+      app: wordpress         # Pods with this label belong to this deployment
+  template:                  # Template for the pods
+    metadata:
+      labels:
+        app: wordpress       # Label applied to each pod
+    spec:
+      containers:
+      - name: wordpress
+        image: wordpress:latest   # Docker image
+        ports:
+        - containerPort: 80       # Port inside the container
