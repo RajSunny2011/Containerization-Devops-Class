@@ -18,6 +18,7 @@ Managing infrastructure manually across multiple servers leads to configuration 
 - **Push-based**: Initiates changes from control node immediately
 
 ### **Key Concepts**
+
 | Component         | Description                                                                       |
 | :---------------- | :-------------------------------------------------------------------------------- |
 | **Control Node**  | Machine with Ansible installed                                                    |
