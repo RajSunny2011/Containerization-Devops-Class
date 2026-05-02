@@ -1,0 +1,19 @@
+# Stage 1: Builder
+FROM python:3.13-slim AS builder
+WORKDIR /app
+COPY requirements.txt .
+RUN apt-get update && apt-get install -y --no-install-recommends gcc \
+    && pip install --no-cache-dir --target=/build/deps -r requirements.txt
+
+# Stage 2: Runtime
+FROM python:3.13-slim
+WORKDIR /app
+RUN addgroup --system appgroup && adduser --system --group appuser
+COPY --from=builder --chown=appuser:appgroup /build/deps /app/deps
+ENV PYTHONPATH="/app/deps"
+ENV PATH="/app/deps/bin:$PATH"
+COPY --chown=appuser:appgroup . .
+USER appuser
+EXPOSE 5000
+
+CMD ["python", "app.py"]
